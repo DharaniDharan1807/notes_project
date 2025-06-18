@@ -396,11 +396,12 @@ class NoteListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Note
-        fields = [
-            'id', 'title', 'user', 'category', 'is_page', 'is_shared',
-            'created_at', 'last_modified', 'comments_count', 'word_count',
-            'time_ago', 'can_edit', 'can_delete'
-        ]
+        fields = ['id', 'title', 'content', 'is_page', 'category', 'created_at', 'updated_at']
+        # fields = [
+        #     'id', 'title', 'user', 'category', 'is_page', 'is_shared',
+        #     'created_at', 'last_modified', 'comments_count', 'word_count',
+        #     'time_ago', 'can_edit', 'can_delete'
+        # ]
         read_only_fields = ['id', 'created_at', 'last_modified', 'user', 'word_count']
 
     def get_comments_count(self, obj):
