@@ -1,20 +1,22 @@
 
 
-
 # import os
 # from pathlib import Path
 # from decouple import config
+# import dj_database_url
 
 # # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
 # # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here')
+# SECRET_KEY = config('SECRET_KEY')
 
 # # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = config('DEBUG', default=True, cast=bool)
+# DEBUG = config('DEBUG', default=False, cast=bool)
 
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+# # Allow hosts from environment variable or default to Render's domain
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+# ALLOWED_HOSTS.append('*.onrender.com')  # Add Render's domain
 
 # INSTALLED_APPS = [
 #     'django.contrib.admin',
@@ -26,12 +28,13 @@
 #     'rest_framework',
 #     'rest_framework.authtoken',
 #     'corsheaders',
-#     'notes_app',  # Updated to match app directory
+#     'notes_app',
 # ]
 
 # MIDDLEWARE = [
 #     'corsheaders.middleware.CorsMiddleware',
 #     'django.middleware.security.SecurityMiddleware',
+#     'whitenoise.middleware.WhiteNoiseMiddleware',  
 #     'django.contrib.sessions.middleware.SessionMiddleware',
 #     'django.middleware.common.CommonMiddleware',
 #     'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,16 +63,12 @@
 
 # WSGI_APPLICATION = 'notes_project.wsgi.application'
 
-# # Database
+# # Database configuration for Render (using dj-database-url for flexibility)
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'notesdb',
-#         'USER': 'root',
-#         'PASSWORD': 'root',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
-#     }
+#     'default': dj_database_url.config(
+#         default=config('DATABASE_URL', default='mysql://root:root@127.0.0.1:3306/notesdb'),
+#         conn_max_age=600
+#     )
 # }
 
 # AUTH_PASSWORD_VALIDATORS = [
@@ -105,16 +104,15 @@
 # USE_I18N = True
 # USE_TZ = True
 
+
 # STATIC_URL = '/static/'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# # CORS Configuration
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-#     'http://127.0.0.1:3000',
-#     'http://localhost:5173',
-#     'http://127.0.0.1:5173',
-# ]
+
+# CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173', cast=lambda v: [s.strip() for s in v.split(',')])
 
 # CORS_ALLOW_HEADERS = [
 #     'accept',
@@ -134,6 +132,29 @@
 # SESSION_COOKIE_AGE = 86400  # 24 hours
 # SESSION_SAVE_EVERY_REQUEST = True
 
+# # # Security settings for production
+# # SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+# # SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+# # CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+# # SECURE_BROWSER_XSS_FILTER = True
+# # SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# # Security settings
+# SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+# SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+# CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+
+# # Additional security headers
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# # For development only
+# if DEBUG:
+#     SECURE_SSL_REDIRECT = False
+#     SESSION_COOKIE_SECURE = False
+#     CSRF_COOKIE_SECURE = False
+
+
 
 import os
 from pathlib import Path
@@ -149,9 +170,9 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Allow hosts from environment variable or default to Render's domain
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
-ALLOWED_HOSTS.append('*.onrender.com')  # Add Render's domain
+# Allow hosts from environment variable, default to Render's domain, and include specific Render host
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,notes-project-3-rap8.onrender.com', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS.append('*.onrender.com')  # Support Render's dynamic subdomains
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -169,7 +190,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -239,13 +260,11 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173', cast=lambda v: [s.strip() for s in v.split(',')])
 
@@ -267,23 +286,16 @@ CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_AGE = 86400  # 24 hours
 SESSION_SAVE_EVERY_REQUEST = True
 
-# # Security settings for production
-# SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
-# SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
-# CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-
 # Security settings
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
-SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
-CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)  # Enforce HTTPS on Render
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)  # Cookies over HTTPS
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)  # CSRF cookies over HTTPS
 
 # Additional security headers
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# For development only
+# Override security settings for development
 if DEBUG:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
