@@ -159,8 +159,11 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Allow hosts from environment variable, default to current Render domain, and include wildcard for Render
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,notes-project-8-rz4q.onrender.com', cast=lambda v: [s.strip() for s in v.split(',')])
-ALLOWED_HOSTS.append('*.onrender.com')  # Support Render's dynamic subdomains
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,notes-project-8-rz4q.onrender.com', cast=lambda v: [s.strip() for s in v.split(',')])
+# ALLOWED_HOSTS.append('*.onrender.com')  # Support Render's dynamic subdomains
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS',cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS.append('.onrender.com')  # Note the dot at the beginning
 
 INSTALLED_APPS = [
     'django.contrib.admin',
