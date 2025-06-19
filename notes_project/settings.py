@@ -160,7 +160,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Allow hosts from environment variable with proper defaults
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', 
-                      default='localhost,127.0.0.1,notes-project-8-rz4q.onrender.com,notes-project-8.onrender.com', 
+                      default='localhost,127.0.0.1,notes-project-10-rz4q.onrender.com,notes-project-10.onrender.com', 
                       cast=lambda v: [s.strip() for s in v.split(',')])
 ALLOWED_HOSTS.append('.onrender.com')  # Support all Render subdomains
 
