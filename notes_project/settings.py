@@ -13,7 +13,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Allow hosts from environment variable, default to Render's domain, and include specific Render host
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,notes-project-4-7i0o.onrender.com', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,notes-project-5-blkw.onrender.com', cast=lambda v: [s.strip() for s in v.split(',')])
 ALLOWED_HOSTS.append('*.onrender.com')  # Support Render's dynamic subdomains
 
 INSTALLED_APPS = [
